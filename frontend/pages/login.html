@@ -1,0 +1,302 @@
+<!-- 
+Database Schema (MySQL)
+---------------------------------
+students(student_id PK, name, email, password, department_id FK)
+teachers(teacher_id PK, name, email, password, department_id FK, role ENUM[student,teacher,HOD,admin])
+departments(department_id PK, dept_name)
+subjects(subject_id PK, subject_name, teacher_id FK, department_id FK)
+feedback(feedback_id PK, student_id FK, teacher_id FK, subject_id FK, rating INT, comment TEXT, timestamp)
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Student Feedback System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="../index.html" class="text-2xl font-bold text-blue-600">FeedbackHub</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="../index.html" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8">
+            <!-- Header -->
+            <div class="text-center">
+                <h2 class="mt-6 text-3xl font-extrabold text-gray-900">
+                    Sign in to your account
+                </h2>
+                <p class="mt-2 text-sm text-gray-600">
+                    Or
+                    <a href="register.html" class="font-medium text-blue-600 hover:text-blue-500">
+                        create a new account
+                    </a>
+                </p>
+            </div>
+
+            <!-- Login Form -->
+            <form class="mt-8 space-y-6" id="loginForm">
+                <!-- User Type Selection -->
+                <div class="space-y-4">
+                    <label class="block text-sm font-medium text-gray-700">I am a:</label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <label class="relative flex cursor-pointer rounded-lg border border-gray-300 bg-white p-4 shadow-sm focus:outline-none">
+                            <input type="radio" name="userType" value="student" class="sr-only" required>
+                            <span class="flex flex-1">
+                                <span class="flex flex-col">
+                                    <span class="block text-sm font-medium text-gray-900">Student</span>
+                                    <span class="mt-1 flex items-center text-xs text-gray-500">Submit feedback</span>
+                                </span>
+                            </span>
+                            <span class="pointer-events-none absolute -inset-px rounded-lg border-2" aria-hidden="true"></span>
+                        </label>
+                        <label class="relative flex cursor-pointer rounded-lg border border-gray-300 bg-white p-4 shadow-sm focus:outline-none">
+                            <input type="radio" name="userType" value="teacher" class="sr-only" required>
+                            <span class="flex flex-1">
+                                <span class="flex flex-col">
+                                    <span class="block text-sm font-medium text-gray-900">Teacher</span>
+                                    <span class="mt-1 flex items-center text-xs text-gray-500">View feedback</span>
+                                </span>
+                            </span>
+                            <span class="pointer-events-none absolute -inset-px rounded-lg border-2" aria-hidden="true"></span>
+                        </label>
+                        <label class="relative flex cursor-pointer rounded-lg border border-gray-300 bg-white p-4 shadow-sm focus:outline-none">
+                            <input type="radio" name="userType" value="admin" class="sr-only" required>
+                            <span class="flex flex-1">
+                                <span class="flex flex-col">
+                                    <span class="block text-sm font-medium text-gray-900">Admin</span>
+                                    <span class="mt-1 flex items-center text-xs text-gray-500">Manage system</span>
+                                </span>
+                            </span>
+                            <span class="pointer-events-none absolute -inset-px rounded-lg border-2" aria-hidden="true"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Email Field -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">
+                        Email address
+                    </label>
+                    <div class="mt-1">
+                        <input id="email" name="email" type="email" autocomplete="email" required
+                               class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm form-input"
+                               placeholder="Enter your email">
+                    </div>
+                </div>
+
+                <!-- Password Field -->
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">
+                        Password
+                    </label>
+                    <div class="mt-1">
+                        <input id="password" name="password" type="password" autocomplete="current-password" required
+                               class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm form-input"
+                               placeholder="Enter your password">
+                    </div>
+                </div>
+
+                <!-- Remember Me & Forgot Password -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input id="remember-me" name="remember-me" type="checkbox"
+                               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                        <label for="remember-me" class="ml-2 block text-sm text-gray-900">
+                            Remember me
+                        </label>
+                    </div>
+
+                    <div class="text-sm">
+                        <a href="#" class="font-medium text-blue-600 hover:text-blue-500">
+                            Forgot your password?
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div>
+                    <button type="submit" id="loginBtn"
+                            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 btn-hover">
+                        <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                            <svg class="h-5 w-5 text-blue-500 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                        </span>
+                        <span id="loginBtnText">Sign in</span>
+                        <div id="loginSpinner" class="hidden spinner ml-2"></div>
+                    </button>
+                </div>
+
+                <!-- Demo Credentials -->
+                <div class="bg-blue-50 border border-blue-200 rounded-md p-4">
+                    <h3 class="text-sm font-medium text-blue-800 mb-2">Demo Credentials:</h3>
+                    <div class="text-xs text-blue-700 space-y-1">
+                        <div><strong>Student:</strong> student@demo.com / password123</div>
+                        <div><strong>Teacher:</strong> teacher@demo.com / password123</div>
+                        <div><strong>Admin:</strong> admin@demo.com / password123</div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../assets/js/scripts.js"></script>
+    <script>
+        // Login page specific functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+            const userTypeInputs = document.querySelectorAll('input[name="userType"]');
+            const loginBtn = document.getElementById('loginBtn');
+            const loginBtnText = document.getElementById('loginBtnText');
+            const loginSpinner = document.getElementById('loginSpinner');
+
+            // Handle user type selection styling
+            userTypeInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    // Remove active styling from all labels
+                    document.querySelectorAll('label').forEach(label => {
+                        const borderSpan = label.querySelector('span[aria-hidden="true"]');
+                        if (borderSpan) {
+                            borderSpan.classList.remove('border-blue-500', 'ring-2', 'ring-blue-500');
+                        }
+                        label.classList.remove('ring-2', 'ring-blue-500');
+                    });
+                    
+                    // Add active styling to selected label
+                    if (this.checked) {
+                        const label = this.closest('label');
+                        const borderSpan = label.querySelector('span[aria-hidden="true"]');
+                        if (borderSpan) {
+                            borderSpan.classList.add('border-blue-500', 'ring-2', 'ring-blue-500');
+                        }
+                        label.classList.add('ring-2', 'ring-blue-500');
+                    }
+                });
+                
+            });
+
+            // Ensure only one option can be selected (radio button behavior)
+            userTypeInputs.forEach(input => {
+                input.addEventListener('click', function() {
+                    // Uncheck all other inputs
+                    userTypeInputs.forEach(otherInput => {
+                        if (otherInput !== this) {
+                            otherInput.checked = false;
+                        }
+                    });
+                });
+            });
+
+            // Handle form submission
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form data
+                const formData = new FormData(loginForm);
+                const userType = formData.get('userType');
+                const email = formData.get('email');
+                const password = formData.get('password');
+
+                // Validate form
+                if (!userType || !email || !password) {
+                    FeedbackSystem.utils.showAlert('Please fill in all required fields.', 'error');
+                    return;
+                }
+
+                if (!FeedbackSystem.utils.validateEmail(email)) {
+                    FeedbackSystem.utils.showAlert('Please enter a valid email address.', 'error');
+                    return;
+                }
+
+                // Show loading state
+                loginBtn.disabled = true;
+                loginBtnText.textContent = 'Signing in...';
+                loginSpinner.classList.remove('hidden');
+
+                // Simulate login process (replace with actual API call)
+                setTimeout(() => {
+                    // Demo login logic
+                    if (email === 'student@demo.com' && password === 'password123' && userType === 'student') {
+                        handleSuccessfulLogin({ name: 'Demo Student', email: email, type: 'student' });
+                    } else if (email === 'teacher@demo.com' && password === 'password123' && userType === 'teacher') {
+                        handleSuccessfulLogin({ name: 'Demo Teacher', email: email, type: 'teacher' });
+                    } else if (email === 'admin@demo.com' && password === 'password123' && userType === 'admin') {
+                        handleSuccessfulLogin({ name: 'Demo Admin', email: email, type: 'admin' });
+                    } else {
+                        FeedbackSystem.utils.showAlert('Invalid credentials. Please try again.', 'error');
+                        resetLoginButton();
+                    }
+                }, 1500);
+            });
+
+            function handleSuccessfulLogin(user) {
+                // Store user data
+                FeedbackSystem.utils.storage.set('user', user);
+                FeedbackSystem.utils.storage.set('userType', user.type);
+                
+                // Show success message
+                FeedbackSystem.utils.showAlert(`Welcome back, ${user.name}!`, 'success');
+                
+                // Redirect based on user type
+                setTimeout(() => {
+                    switch(user.type) {
+                        case 'student':
+                            window.location.href = 'student/dashboard.html';
+                            break;
+                        case 'teacher':
+                            window.location.href = 'teacher/dashboard.html';
+                            break;
+                        case 'admin':
+                            window.location.href = 'admin/dashboard.html';
+                            break;
+                        default:
+                            window.location.href = '../index.html';
+                    }
+                }, 1000);
+            }
+
+            function resetLoginButton() {
+                loginBtn.disabled = false;
+                loginBtnText.textContent = 'Sign in';
+                loginSpinner.classList.add('hidden');
+            }
+
+            // Auto-select user type based on email if it contains keywords
+            document.getElementById('email').addEventListener('input', function() {
+                const email = this.value.toLowerCase();
+                userTypeInputs.forEach(input => {
+                    input.checked = false;
+                });
+                
+                if (email.includes('student')) {
+                    document.querySelector('input[value="student"]').checked = true;
+                    document.querySelector('input[value="student"]').dispatchEvent(new Event('change'));
+                } else if (email.includes('teacher')) {
+                    document.querySelector('input[value="teacher"]').checked = true;
+                    document.querySelector('input[value="teacher"]').dispatchEvent(new Event('change'));
+                } else if (email.includes('admin')) {
+                    document.querySelector('input[value="admin"]').checked = true;
+                    document.querySelector('input[value="admin"]').dispatchEvent(new Event('change'));
+                }
+            });
+        });
+    </script>
+</body>
+</html>

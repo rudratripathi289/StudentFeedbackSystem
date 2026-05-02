@@ -1,0 +1,455 @@
+<!-- 
+Database Schema (MySQL)
+---------------------------------
+students(student_id PK, name, email, password, department_id FK)
+teachers(teacher_id PK, name, email, password, department_id FK, role ENUM[student,teacher,HOD,admin])
+departments(department_id PK, dept_name)
+subjects(subject_id PK, subject_name, teacher_id FK, department_id FK)
+feedback(feedback_id PK, student_id FK, teacher_id FK, subject_id FK, rating INT, comment TEXT, timestamp)
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - Feedback System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="../../index.html" class="text-2xl font-bold text-gray-900">FeedbackHub</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="feedback_list.html" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">View All Feedback</a>
+                    <button onclick="logout()" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <!-- Welcome Header -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900" id="welcomeMessage">Welcome, Teacher!</h1>
+                    <p class="text-gray-600 mt-2">View feedback from your students and track your performance</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm text-gray-500">Department</p>
+                    <p class="text-lg font-semibold text-gray-900" id="teacherDepartment">Computer Science</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-gray-900 rounded-md flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">Total Feedback</p>
+                        <p class="text-2xl font-bold text-gray-900" id="totalFeedback">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-gray-900 rounded-md flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">Average Rating</p>
+                        <p class="text-2xl font-bold text-gray-900" id="averageRating">0.0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-gray-900 rounded-md flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">Teaching Subjects</p>
+                        <p class="text-2xl font-bold text-gray-900" id="totalSubjects">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-gray-900 rounded-md flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">This Month</p>
+                        <p class="text-2xl font-bold text-gray-900" id="monthlyFeedback">0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Recent Feedback -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-lg font-semibold text-gray-900">Recent Student Feedback</h2>
+                        <p class="text-sm text-gray-600">Latest feedback from your courses</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-4" id="recentFeedbackList">
+                            <!-- Feedback items will be populated here -->
+                        </div>
+                        
+                        <!-- Empty State -->
+                        <div id="emptyFeedbackState" class="hidden text-center py-8">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                            </svg>
+                            <h3 class="mt-2 text-sm font-medium text-gray-900">No feedback yet</h3>
+                            <p class="mt-1 text-sm text-gray-500">Students haven't submitted feedback for your courses yet.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions & Rating Distribution -->
+            <div class="space-y-6">
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">Quick Actions</h3>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <a href="feedback_list.html" class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                            </svg>
+                            View All Feedback
+                        </a>
+                        <button onclick="refreshDashboard()" class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                            Refresh Dashboard
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Rating Distribution -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">Rating Distribution</h3>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-3" id="ratingDistribution">
+                            <!-- Rating bars will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../assets/js/scripts.js"></script>
+    <script>
+        // Teacher Dashboard functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in and is a teacher
+            const currentUser = FeedbackSystem?.navigation?.getCurrentUser();
+            if (!currentUser || currentUser.type !== 'teacher') {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            // Initialize dashboard
+            initializeDashboard();
+            loadTeacherFeedback();
+        });
+
+        function initializeDashboard() {
+            const currentUser = FeedbackSystem?.navigation?.getCurrentUser();
+            if (currentUser) {
+                document.getElementById('welcomeMessage').textContent = `Welcome, ${currentUser.name}!`;
+                if (currentUser.department) {
+                    document.getElementById('teacherDepartment').textContent = currentUser.department.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+                }
+            }
+        }
+
+        function loadTeacherFeedback() {
+            // Get all feedback from localStorage (demo data)
+            let allFeedback = [];
+            if (typeof FeedbackSystem !== 'undefined' && FeedbackSystem.utils && FeedbackSystem.utils.storage) {
+                allFeedback = FeedbackSystem.utils.storage.get('feedbackHistory') || [];
+            } else {
+                // Fallback: get from localStorage
+                allFeedback = JSON.parse(localStorage.getItem('feedbackHistory') || '[]');
+            }
+
+            // Filter feedback for current teacher (demo: using teacher name from storage)
+            const currentUser = FeedbackSystem?.navigation?.getCurrentUser();
+            const teacherName = currentUser?.name || 'Dr. Sarah Johnson'; // Fallback for demo
+            
+            const teacherFeedback = allFeedback.filter(feedback => 
+                feedback.teacher === teacherName
+            );
+
+            // Update stats
+            updateDashboardStats(teacherFeedback);
+            
+            // Display recent feedback
+            displayRecentFeedback(teacherFeedback);
+            
+            // Update rating distribution
+            updateRatingDistribution(teacherFeedback);
+        }
+
+        function updateDashboardStats(feedback) {
+            document.getElementById('totalFeedback').textContent = feedback.length;
+            
+            if (feedback.length > 0) {
+                const totalRating = feedback.reduce((sum, f) => sum + parseInt(f.rating), 0);
+                const averageRating = (totalRating / feedback.length).toFixed(1);
+                document.getElementById('averageRating').textContent = averageRating;
+                
+                // Count unique subjects
+                const uniqueSubjects = new Set(feedback.map(f => f.subject));
+                document.getElementById('totalSubjects').textContent = uniqueSubjects.size;
+                
+                // Count this month's feedback
+                const thisMonth = new Date().getMonth();
+                const thisYear = new Date().getFullYear();
+                const monthlyFeedback = feedback.filter(f => {
+                    const feedbackDate = new Date(f.timestamp);
+                    return feedbackDate.getMonth() === thisMonth && feedbackDate.getFullYear() === thisYear;
+                });
+                document.getElementById('monthlyFeedback').textContent = monthlyFeedback.length;
+            } else {
+                document.getElementById('averageRating').textContent = '0.0';
+                document.getElementById('totalSubjects').textContent = '0';
+                document.getElementById('monthlyFeedback').textContent = '0';
+            }
+        }
+
+        function displayRecentFeedback(feedback) {
+            const recentFeedbackList = document.getElementById('recentFeedbackList');
+            const emptyFeedbackState = document.getElementById('emptyFeedbackState');
+            
+            if (feedback.length === 0) {
+                recentFeedbackList.innerHTML = '';
+                emptyFeedbackState.classList.remove('hidden');
+                return;
+            }
+
+            // Hide empty state
+            emptyFeedbackState.classList.add('hidden');
+            
+            // Sort by date (newest first) and take first 5
+            const recentFeedback = feedback
+                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                .slice(0, 5);
+
+            recentFeedbackList.innerHTML = '';
+
+            recentFeedback.forEach(feedbackItem => {
+                const feedbackCard = document.createElement('div');
+                feedbackCard.className = 'bg-gray-50 rounded-lg border border-gray-200 p-4';
+                
+                const date = new Date(feedbackItem.timestamp);
+                const formattedDate = date.toLocaleDateString();
+                
+                feedbackCard.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">${feedbackItem.subject}</h3>
+                            <div class="space-y-1 text-sm text-gray-600">
+                                <p><span class="font-medium">Student Feedback:</span> ${feedbackItem.comments.substring(0, 100)}${feedbackItem.comments.length > 100 ? '...' : ''}</p>
+                                <p><span class="font-medium">Date:</span> ${formattedDate}</p>
+                            </div>
+                        </div>
+                        <div class="text-right ml-4">
+                            <div class="flex items-center mb-2">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRatingColor(feedbackItem.rating)}">
+                                    ${feedbackItem.rating}/5
+                                </span>
+                                <span class="ml-2 text-sm text-gray-500">${getRatingText(feedbackItem.rating)}</span>
+                            </div>
+                            <button onclick="viewFeedbackDetails('${feedbackItem.subject}', '${feedbackItem.timestamp}')" class="text-gray-900 hover:text-gray-700 text-sm">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                recentFeedbackList.appendChild(feedbackCard);
+            });
+        }
+
+        function updateRatingDistribution(feedback) {
+            const ratingDistribution = document.getElementById('ratingDistribution');
+            
+            if (feedback.length === 0) {
+                ratingDistribution.innerHTML = '<p class="text-sm text-gray-500 text-center">No ratings yet</p>';
+                return;
+            }
+
+            // Count ratings
+            const ratingCounts = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
+            feedback.forEach(f => {
+                const rating = parseInt(f.rating);
+                if (ratingCounts[rating] !== undefined) {
+                    ratingCounts[rating]++;
+                }
+            });
+
+            ratingDistribution.innerHTML = '';
+
+            // Create rating bars
+            for (let rating = 5; rating >= 1; rating--) {
+                const count = ratingCounts[rating];
+                const percentage = feedback.length > 0 ? (count / feedback.length) * 100 : 0;
+                
+                const ratingBar = document.createElement('div');
+                ratingBar.className = 'flex items-center space-x-3';
+                
+                ratingBar.innerHTML = `
+                    <div class="flex items-center space-x-2 min-w-0">
+                        <span class="text-sm font-medium text-gray-900">${rating}</span>
+                        <span class="text-xs text-gray-500">(${count})</span>
+                    </div>
+                    <div class="flex-1 bg-gray-200 rounded-full h-2">
+                        <div class="bg-gray-900 h-2 rounded-full" style="width: ${percentage}%"></div>
+                    </div>
+                    <span class="text-xs text-gray-500 min-w-0">${percentage.toFixed(0)}%</span>
+                `;
+                
+                ratingDistribution.appendChild(ratingBar);
+            }
+        }
+
+        function getRatingColor(rating) {
+            switch(parseInt(rating)) {
+                case 5: return 'bg-green-100 text-green-800';
+                case 4: return 'bg-blue-100 text-blue-800';
+                case 3: return 'bg-yellow-100 text-yellow-800';
+                case 2: return 'bg-orange-100 text-orange-800';
+                case 1: return 'bg-red-100 text-red-800';
+                default: return 'bg-gray-100 text-gray-800';
+            }
+        }
+
+        function getRatingText(rating) {
+            switch(parseInt(rating)) {
+                case 5: return 'Excellent';
+                case 4: return 'Very Good';
+                case 3: return 'Good';
+                case 2: return 'Fair';
+                case 1: return 'Poor';
+                default: return 'Unknown';
+            }
+        }
+
+        function viewFeedbackDetails(subject, timestamp) {
+            // Get feedback from localStorage
+            let allFeedback = [];
+            if (typeof FeedbackSystem !== 'undefined' && FeedbackSystem.utils && FeedbackSystem.utils.storage) {
+                allFeedback = FeedbackSystem.utils.storage.get('feedbackHistory') || [];
+            } else {
+                allFeedback = JSON.parse(localStorage.getItem('feedbackHistory') || '[]');
+            }
+
+            const feedback = allFeedback.find(f => f.subject === subject && f.timestamp === timestamp);
+            if (!feedback) return;
+
+            // Show feedback details in an alert (in real app, this would open a modal)
+            const details = `
+Feedback Details:
+Subject: ${feedback.subject}
+Student Rating: ${feedback.rating}/5
+Clarity: ${feedback.clarity}/5
+Engagement: ${feedback.engagement}/5
+Relevance: ${feedback.relevance}/5
+Difficulty: ${feedback.difficulty}/5
+Comments: ${feedback.comments}
+Date: ${new Date(feedback.timestamp).toLocaleDateString()}
+            `;
+            
+            alert(details);
+        }
+
+        function refreshDashboard() {
+            const refreshBtn = event.target;
+            const originalText = refreshBtn.innerHTML;
+            
+            // Show loading state
+            refreshBtn.innerHTML = '<svg class="w-4 h-4 mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>Refreshing...';
+            refreshBtn.disabled = true;
+
+            // Simulate refresh
+            setTimeout(() => {
+                loadTeacherFeedback();
+                refreshBtn.innerHTML = originalText;
+                refreshBtn.disabled = false;
+                
+                showAlert('Dashboard refreshed successfully!', 'success');
+            }, 1000);
+        }
+
+        function showAlert(message, type) {
+            if (typeof FeedbackSystem !== 'undefined' && FeedbackSystem.utils && FeedbackSystem.utils.showAlert) {
+                FeedbackSystem.utils.showAlert(message, type);
+            } else {
+                // Fallback alert
+                alert(message);
+            }
+        }
+
+        function logout() {
+            // Clear user data from storage
+            if (typeof FeedbackSystem !== 'undefined' && FeedbackSystem.utils && FeedbackSystem.utils.storage) {
+                FeedbackSystem.utils.storage.remove('user');
+                FeedbackSystem.utils.storage.remove('userType');
+            } else {
+                // Fallback: clear localStorage
+                localStorage.removeItem('user');
+                localStorage.removeItem('userType');
+            }
+            
+            // Redirect to home page
+            window.location.href = '../../index.html';
+        }
+    </script>
+</body>
+</html>

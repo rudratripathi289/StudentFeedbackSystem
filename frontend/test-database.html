@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Database Setup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
+        <h1 class="text-2xl font-bold mb-4">Test Database Setup</h1>
+        
+        <button id="testDbBtn" class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 mb-4">
+            Test Database Setup
+        </button>
+        
+        <button id="testApiBtn" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 mb-4">
+            Test API Info
+        </button>
+        
+        <div id="result" class="mt-4 p-4 bg-gray-100 rounded-md hidden">
+            <h3 class="font-semibold">Response:</h3>
+            <pre id="responseText" class="mt-2 text-sm"></pre>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('testDbBtn').addEventListener('click', async function() {
+            try {
+                console.log('Testing database setup...');
+                
+                const response = await fetch('http://localhost/WD%20Master%20Project/backend/database/setup');
+                console.log('Response status:', response.status);
+                
+                const result = await response.text();
+                console.log('Response text:', result);
+                
+                let jsonResult;
+                try {
+                    jsonResult = JSON.parse(result);
+                } catch (e) {
+                    jsonResult = { error: 'Invalid JSON response', raw: result };
+                }
+                
+                // Show result
+                document.getElementById('result').classList.remove('hidden');
+                document.getElementById('responseText').textContent = JSON.stringify(jsonResult, null, 2);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').classList.remove('hidden');
+                document.getElementById('responseText').textContent = 'Error: ' + error.message;
+            }
+        });
+        
+        document.getElementById('testApiBtn').addEventListener('click', async function() {
+            try {
+                console.log('Testing API info...');
+                
+                const response = await fetch('http://localhost/WD%20Master%20Project/backend/');
+                console.log('Response status:', response.status);
+                
+                const result = await response.text();
+                console.log('Response text:', result);
+                
+                let jsonResult;
+                try {
+                    jsonResult = JSON.parse(result);
+                } catch (e) {
+                    jsonResult = { error: 'Invalid JSON response', raw: result };
+                }
+                
+                // Show result
+                document.getElementById('result').classList.remove('hidden');
+                document.getElementById('responseText').textContent = JSON.stringify(jsonResult, null, 2);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').classList.remove('hidden');
+                document.getElementById('responseText').textContent = 'Error: ' + error.message;
+            }
+        });
+    </script>
+</body>
+</html>

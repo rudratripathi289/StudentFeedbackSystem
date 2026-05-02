@@ -1,4 +1,4 @@
-# StudentFeedbackSystem# Student Feedback System - Backend
+# Student Feedback System - Backend
 
 A complete PHP backend for the Student Feedback System with RESTful API endpoints, user authentication, and database management.
 

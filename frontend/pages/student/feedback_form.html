@@ -1,0 +1,431 @@
+<!-- 
+Database Schema (MySQL)
+---------------------------------
+students(student_id PK, name, email, password, department_id FK)
+teachers(teacher_id PK, name, email, password, department_id FK, role ENUM[student,teacher,HOD,admin])
+departments(department_id PK, dept_name)
+subjects(subject_id PK, subject_name, teacher_id FK, department_id FK)
+feedback(feedback_id PK, student_id FK, teacher_id FK, subject_id FK, rating INT, comment TEXT, timestamp)
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Feedback - Student Feedback System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="dashboard.html" class="text-2xl font-bold text-gray-900">FeedbackHub</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="dashboard.html" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Back to Dashboard</a>
+                    <a href="history.html" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">History</a>
+                    <button onclick="logout()" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-4xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+            <div class="text-center">
+                <h1 class="text-3xl font-bold text-gray-900">Submit Feedback</h1>
+                <p class="text-gray-600 mt-2">Share your thoughts about the course and instructor</p>
+            </div>
+        </div>
+
+        <!-- Subject Information -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6" id="subjectInfo">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Course Information</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <p class="text-sm text-gray-500">Subject</p>
+                    <p class="text-lg font-medium text-gray-900" id="subjectName">Loading...</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Instructor</p>
+                    <p class="text-lg font-medium text-gray-900" id="teacherName">Loading...</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Department</p>
+                    <p class="text-lg font-medium text-gray-900" id="departmentName">Loading...</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Date</p>
+                    <p class="text-lg font-medium text-gray-900" id="currentDate">Loading...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback Form -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <form id="feedbackForm" class="space-y-6">
+                <!-- Rating Section -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Overall Rating</h3>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2">
+                            <input type="radio" id="rating1" name="rating" value="1" class="sr-only" required>
+                            <label for="rating1" class="rating-label" data-rating="1">
+                                <span class="text-2xl">1</span>
+                                <span class="text-xs text-gray-500">Poor</span>
+                            </label>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="radio" id="rating2" name="rating" value="2" class="sr-only" required>
+                            <label for="rating2" class="rating-label" data-rating="2">
+                                <span class="text-2xl">2</span>
+                                <span class="text-xs text-gray-500">Fair</span>
+                            </label>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="radio" id="rating3" name="rating" value="3" class="sr-only" required>
+                            <label for="rating3" class="rating-label" data-rating="3">
+                                <span class="text-2xl">3</span>
+                                <span class="text-xs text-gray-500">Good</span>
+                            </label>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="radio" id="rating4" name="rating" value="4" class="sr-only" required>
+                            <label for="rating4" class="rating-label" data-rating="4">
+                                <span class="text-2xl">4</span>
+                                <span class="text-xs text-gray-500">Very Good</span>
+                            </label>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="radio" id="rating5" name="rating" value="5" class="sr-only" required>
+                            <label for="rating5" class="rating-label" data-rating="5">
+                                <span class="text-2xl">5</span>
+                                <span class="text-xs text-gray-500">Excellent</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Specific Ratings -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Teaching Quality</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-700">Clarity of Explanation</span>
+                                <div class="flex items-center space-x-2">
+                                    <input type="radio" name="clarity" value="1" class="sr-only" required>
+                                    <label class="rating-label-small" data-rating="1">1</label>
+                                    <input type="radio" name="clarity" value="2" class="sr-only" required>
+                                    <label class="rating-label-small" data-rating="2">2</label>
+                                    <input type="radio" name="clarity" value="3" class="sr-only" required>
+                                    <label class="rating-label-small" data-rating="3">3</label>
+                                    <input type="radio" name="clarity" value="4" class="sr-only" required>
+                                    <label class="rating-label-small" data-rating="4">4</label>
+                                    <input type="radio" name="clarity" value="5" class="sr-only" required>
+                                    <label class="rating-label-small" data-rating="5">5</label>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-700">Engagement Level</span>
+                                <div class="flex items-center space-x-2">
+                                    <input type="radio" name="engagement" value="1" class="sr-only" required>
+                                    <label class="rating-label-small" data-rating="1">1</label>
+                                    <input type="radio" name="engagement" value="2" class="sr-only" required>
+                                    <label class="rating-label-small" data-rating="2">2</label>
+                                    <input type="radio" name="engagement" value="3" class="sr-only" required>
+                                    <label class="rating-label-small" data-rating="3">3</label>
+                                    <input type="radio" name="engagement" value="4" class="sr-only" required>
+                                    <label class="rating-label-small" data-rating="4">4</label>
+                                    <input type="radio" name="engagement" value="5" class="sr-only" required>
+                                    <label class="rating-label-small" data-rating="5">5</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Course Content</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-700">Relevance</span>
+                                <div class="flex items-center space-x-2">
+                                    <input type="radio" name="relevance" value="1" class="sr-only" required>
+                                    <label class="rating-label-small" data-rating="1">1</label>
+                                    <input type="radio" name="relevance" value="2" class="sr-only" required>
+                                    <label class="rating-label-small" data-rating="2">2</label>
+                                    <input type="radio" name="relevance" value="3" class="sr-only" required>
+                                    <label class="rating-label-small" data-rating="3">3</label>
+                                    <input type="radio" name="relevance" value="4" class="sr-only" required>
+                                    <label class="rating-label-small" data-rating="4">4</label>
+                                    <input type="radio" name="relevance" value="5" class="sr-only" required>
+                                    <label class="rating-label-small" data-rating="5">5</label>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-700">Difficulty Level</span>
+                                <div class="flex items-center space-x-2">
+                                    <input type="radio" name="difficulty" value="1" class="sr-only" required>
+                                    <label class="rating-label-small" data-rating="1">1</label>
+                                    <input type="radio" name="difficulty" value="2" class="sr-only" required>
+                                    <label class="rating-label-small" data-rating="2">2</label>
+                                    <input type="radio" name="difficulty" value="3" class="sr-only" required>
+                                    <label class="rating-label-small" data-rating="3">3</label>
+                                    <input type="radio" name="difficulty" value="4" class="sr-only" required>
+                                    <label class="rating-label-small" data-rating="4">4</label>
+                                    <input type="radio" name="difficulty" value="5" class="sr-only" required>
+                                    <label class="rating-label-small" data-rating="5">5</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comments Section -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Additional Comments</h3>
+                    <div>
+                        <label for="comments" class="block text-sm font-medium text-gray-700 mb-2">
+                            Please share your thoughts, suggestions, or any specific feedback
+                        </label>
+                        <textarea 
+                            id="comments" 
+                            name="comments" 
+                            rows="4" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 form-input"
+                            placeholder="Share your experience with this course and instructor..."
+                            required
+                        ></textarea>
+                        <p class="mt-1 text-xs text-gray-500">Your feedback helps improve the learning experience for everyone.</p>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex justify-end space-x-4">
+                    <button 
+                        type="button" 
+                        onclick="window.location.href='dashboard.html'"
+                        class="px-6 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        type="submit" 
+                        id="submitBtn"
+                        class="px-6 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                    >
+                        Submit Feedback
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../../assets/js/scripts.js"></script>
+    <script>
+        // Feedback Form functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in and is a student
+            const currentUser = FeedbackSystem?.navigation?.getCurrentUser();
+            if (!currentUser || currentUser.type !== 'student') {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            // Load subject information
+            loadSubjectInfo();
+            
+            // Initialize rating labels
+            initializeRatingLabels();
+            
+            // Handle form submission
+            document.getElementById('feedbackForm').addEventListener('submit', handleFormSubmission);
+        });
+
+        function loadSubjectInfo() {
+            // Get subject info from storage (set by dashboard)
+            let subjectInfo;
+            if (typeof FeedbackSystem !== 'undefined' && FeedbackSystem.utils && FeedbackSystem.utils.storage) {
+                subjectInfo = FeedbackSystem.utils.storage.get('currentSubject');
+            } else {
+                // Fallback: get from localStorage
+                subjectInfo = JSON.parse(localStorage.getItem('currentSubject') || '{}');
+            }
+
+            if (subjectInfo && subjectInfo.name) {
+                document.getElementById('subjectName').textContent = subjectInfo.name;
+                document.getElementById('teacherName').textContent = subjectInfo.teacher;
+                document.getElementById('departmentName').textContent = subjectInfo.department;
+            } else {
+                // If no subject info, redirect back to dashboard
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            // Set current date
+            const today = new Date();
+            document.getElementById('currentDate').textContent = today.toLocaleDateString();
+        }
+
+        function initializeRatingLabels() {
+            // Main rating labels
+            document.querySelectorAll('.rating-label').forEach(label => {
+                label.addEventListener('click', function() {
+                    const rating = this.getAttribute('data-rating');
+                    const radio = document.getElementById(`rating${rating}`);
+                    radio.checked = true;
+                    
+                    // Update styling
+                    updateRatingLabels(rating);
+                });
+            });
+
+            // Small rating labels
+            document.querySelectorAll('.rating-label-small').forEach(label => {
+                label.addEventListener('click', function() {
+                    const rating = this.getAttribute('data-rating');
+                    const name = this.previousElementSibling.name;
+                    const radio = document.querySelector(`input[name="${name}"][value="${rating}"]`);
+                    radio.checked = true;
+                    
+                    // Update styling for this group
+                    updateSmallRatingLabels(name, rating);
+                });
+            });
+        }
+
+        function updateRatingLabels(selectedRating) {
+            document.querySelectorAll('.rating-label').forEach(label => {
+                const rating = parseInt(label.getAttribute('data-rating'));
+                if (rating <= selectedRating) {
+                    label.classList.add('bg-gray-900', 'text-white');
+                    label.classList.remove('bg-gray-100', 'text-gray-700');
+                } else {
+                    label.classList.remove('bg-gray-900', 'text-white');
+                    label.classList.add('bg-gray-100', 'text-gray-700');
+                }
+            });
+        }
+
+        function updateSmallRatingLabels(name, selectedRating) {
+            document.querySelectorAll(`input[name="${name}"]`).forEach(input => {
+                const label = input.nextElementSibling;
+                const rating = parseInt(label.getAttribute('data-rating'));
+                if (rating <= selectedRating) {
+                    label.classList.add('bg-gray-900', 'text-white');
+                    label.classList.remove('bg-gray-100', 'text-gray-700');
+                } else {
+                    label.classList.remove('bg-gray-900', 'text-white');
+                    label.classList.add('bg-gray-100', 'text-gray-700');
+                }
+            });
+        }
+
+        function handleFormSubmission(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.textContent;
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
+            // Get form data
+            const formData = new FormData(e.target);
+            const feedbackData = {
+                rating: formData.get('rating'),
+                clarity: formData.get('clarity'),
+                engagement: formData.get('engagement'),
+                relevance: formData.get('relevance'),
+                difficulty: formData.get('difficulty'),
+                comments: formData.get('comments'),
+                timestamp: new Date().toISOString()
+            };
+            
+            // Validate form
+            if (!feedbackData.rating || !feedbackData.clarity || !feedbackData.engagement || 
+                !feedbackData.relevance || !feedbackData.difficulty || !feedbackData.comments.trim()) {
+                showAlert('Please fill in all required fields.', 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+                return;
+            }
+            
+            // Simulate submission (replace with actual API call)
+            setTimeout(() => {
+                // Store feedback (in real app, this would be sent to backend)
+                const subjectInfo = FeedbackSystem?.utils?.storage?.get('currentSubject') || 
+                                  JSON.parse(localStorage.getItem('currentSubject') || '{}');
+                
+                const feedback = {
+                    ...feedbackData,
+                    subject: subjectInfo.name,
+                    teacher: subjectInfo.teacher,
+                    department: subjectInfo.department
+                };
+                
+                // Store in localStorage for demo
+                const existingFeedback = JSON.parse(localStorage.getItem('feedbackHistory') || '[]');
+                existingFeedback.push(feedback);
+                localStorage.setItem('feedbackHistory', JSON.stringify(existingFeedback));
+                
+                // Show success message
+                showAlert('Feedback submitted successfully! Thank you for your input.', 'success');
+                
+                // Redirect to dashboard after a short delay
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+            }, 1500);
+        }
+
+        function showAlert(message, type) {
+            if (typeof FeedbackSystem !== 'undefined' && FeedbackSystem.utils && FeedbackSystem.utils.showAlert) {
+                FeedbackSystem.utils.showAlert(message, type);
+            } else {
+                // Fallback alert
+                alert(message);
+            }
+        }
+
+        function logout() {
+            // Clear user data from storage
+            if (typeof FeedbackSystem !== 'undefined' && FeedbackSystem.utils && FeedbackSystem.utils.storage) {
+                FeedbackSystem.utils.storage.remove('user');
+                FeedbackSystem.utils.storage.remove('userType');
+            } else {
+                // Fallback: clear localStorage
+                localStorage.removeItem('user');
+                localStorage.removeItem('userType');
+            }
+            
+            // Redirect to home page
+            window.location.href = '../../index.html';
+        }
+    </script>
+
+    <style>
+        .rating-label {
+            @apply w-16 h-16 bg-gray-100 text-gray-700 rounded-lg flex flex-col items-center justify-center cursor-pointer transition-all duration-200 hover:bg-gray-200;
+        }
+        
+        .rating-label-small {
+            @apply w-8 h-8 bg-gray-100 text-gray-700 rounded-md flex items-center justify-center cursor-pointer transition-all duration-200 hover:bg-gray-200 text-sm font-medium;
+        }
+        
+        .rating-label:hover,
+        .rating-label-small:hover {
+            @apply transform scale-105;
+        }
+    </style>
+</body>
+</html>

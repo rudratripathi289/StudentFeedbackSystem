@@ -1,0 +1,225 @@
+<!-- 
+Database Schema (MySQL)
+---------------------------------
+students(student_id PK, name, email, password, department_id FK)
+teachers(teacher_id PK, name, email, password, department_id FK, role ENUM[student,teacher,HOD,admin])
+departments(department_id PK, dept_name)
+subjects(subject_id PK, subject_name, teacher_id FK, department_id FK)
+feedback(feedback_id PK, student_id FK, teacher_id FK, subject_id FK, rating INT, comment TEXT, timestamp)
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Feedback System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="../../index.html" class="text-2xl font-bold text-gray-900">FeedbackHub</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="feedback_form.html" class="bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-md text-sm font-medium">Submit Feedback</a>
+                    <a href="history.html" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">History</a>
+                    <button onclick="logout()" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <!-- Welcome Header -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900" id="welcomeMessage">Welcome, Student!</h1>
+                    <p class="text-gray-600 mt-2">Manage your feedback and view your academic information</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm text-gray-500">Department</p>
+                    <p class="text-lg font-semibold text-gray-900" id="studentDepartment">Computer Science</p>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Subjects and Teachers -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-lg font-semibold text-gray-900">Your Subjects & Teachers</h2>
+                        <p class="text-sm text-gray-600">Click on a subject to submit feedback</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-4" id="subjectsList">
+                            <!-- Subject cards will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions & Recent Activity -->
+            <div class="space-y-6">
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">Quick Actions</h3>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <a href="feedback_form.html" class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                            </svg>
+                            Submit New Feedback
+                        </a>
+                        <a href="history.html" class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                            </svg>
+                            View History
+                        </a>
+
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+    <script src="../../assets/js/scripts.js"></script>
+    <script>
+        // Student Dashboard functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in and is a student
+            const currentUser = FeedbackSystem?.navigation?.getCurrentUser();
+            if (!currentUser || currentUser.type !== 'student') {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            // Initialize dashboard
+            initializeDashboard();
+            loadSubjects();
+        });
+
+        function initializeDashboard() {
+            const currentUser = FeedbackSystem?.navigation?.getCurrentUser();
+            if (currentUser) {
+                document.getElementById('welcomeMessage').textContent = `Welcome, ${currentUser.name}!`;
+                if (currentUser.department) {
+                    document.getElementById('studentDepartment').textContent = currentUser.department.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+                }
+            }
+        }
+
+        function loadSubjects() {
+            // Demo data - replace with actual API call
+            const subjects = [
+                {
+                    id: 1,
+                    name: 'Advanced Mathematics',
+                    teacher: 'Dr. Sarah Johnson',
+                    department: 'Computer Science'
+                },
+                {
+                    id: 2,
+                    name: 'Data Structures & Algorithms',
+                    teacher: 'Prof. Michael Chen',
+                    department: 'Computer Science'
+                },
+                {
+                    id: 3,
+                    name: 'Database Management Systems',
+                    teacher: 'Dr. Emily Rodriguez',
+                    department: 'Computer Science'
+                },
+                {
+                    id: 4,
+                    name: 'Software Engineering',
+                    teacher: 'Prof. David Thompson',
+                    department: 'Computer Science'
+                },
+                {
+                    id: 5,
+                    name: 'Computer Networks',
+                    teacher: 'Dr. Lisa Wang',
+                    department: 'Computer Science'
+                },
+                {
+                    id: 6,
+                    name: 'Operating Systems',
+                    teacher: 'Prof. Robert Kim',
+                    department: 'Computer Science'
+                }
+            ];
+
+            const subjectsList = document.getElementById('subjectsList');
+            subjectsList.innerHTML = '';
+
+            subjects.forEach(subject => {
+                const subjectCard = document.createElement('div');
+                subjectCard.className = 'bg-gray-50 rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer';
+                subjectCard.onclick = () => openFeedbackForm(subject);
+
+                subjectCard.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">${subject.name}</h3>
+                            <div class="space-y-1 text-sm text-gray-600">
+                                <p><span class="font-medium">Teacher:</span> ${subject.teacher}</p>
+                                <p><span class="font-medium">Department:</span> ${subject.department}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <button class="mt-2 text-gray-900 hover:text-gray-700">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                subjectsList.appendChild(subjectCard);
+            });
+        }
+
+
+
+        function openFeedbackForm(subject) {
+            // Store subject info for feedback form
+            FeedbackSystem.utils.storage.set('currentSubject', subject);
+            window.location.href = 'feedback_form.html';
+        }
+
+        function logout() {
+            // Clear user data from storage
+            if (typeof FeedbackSystem !== 'undefined' && FeedbackSystem.utils && FeedbackSystem.utils.storage) {
+                FeedbackSystem.utils.storage.remove('user');
+                FeedbackSystem.utils.storage.remove('userType');
+            } else {
+                // Fallback: clear localStorage
+                localStorage.removeItem('user');
+                localStorage.removeItem('userType');
+            }
+            
+            // Redirect to home page
+            window.location.href = '../../index.html';
+        }
+    </script>
+</body>
+</html>
