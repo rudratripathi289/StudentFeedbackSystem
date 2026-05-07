@@ -29,6 +29,7 @@ feedback(feedback_id PK, student_id FK, teacher_id FK, subject_id FK, rating INT
                 </div>
                 <div class="flex items-center space-x-4">
                     <a href="../index.html" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Back to Home</a>
+                    <a href="register.html" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Create Account</a>
                 </div>
             </div>
         </div>
@@ -51,12 +52,12 @@ feedback(feedback_id PK, student_id FK, teacher_id FK, subject_id FK, rating INT
             </div>
 
             <!-- Login Form -->
-            <form class="mt-8 space-y-6" id="loginForm">
+            <form class="mt-8 space-y-6" id="loginForm" method="post" action="../../backend/login.php">
                 <!-- User Type Selection -->
                 <div class="space-y-4">
                     <label class="block text-sm font-medium text-gray-700">I am a:</label>
                     <div class="grid grid-cols-3 gap-3">
-                        <label class="relative flex cursor-pointer rounded-lg border border-gray-300 bg-white p-4 shadow-sm focus:outline-none">
+                        <label class="user-type-label relative flex cursor-pointer rounded-lg border border-gray-300 bg-white p-4 shadow-sm focus:outline-none">
                             <input type="radio" name="userType" value="student" class="sr-only" required>
                             <span class="flex flex-1">
                                 <span class="flex flex-col">
@@ -64,9 +65,9 @@ feedback(feedback_id PK, student_id FK, teacher_id FK, subject_id FK, rating INT
                                     <span class="mt-1 flex items-center text-xs text-gray-500">Submit feedback</span>
                                 </span>
                             </span>
-                            <span class="pointer-events-none absolute -inset-px rounded-lg border-2" aria-hidden="true"></span>
+                            <span class="border-span pointer-events-none absolute -inset-px rounded-lg border-2" aria-hidden="true"></span>
                         </label>
-                        <label class="relative flex cursor-pointer rounded-lg border border-gray-300 bg-white p-4 shadow-sm focus:outline-none">
+                        <label class="user-type-label relative flex cursor-pointer rounded-lg border border-gray-300 bg-white p-4 shadow-sm focus:outline-none">
                             <input type="radio" name="userType" value="teacher" class="sr-only" required>
                             <span class="flex flex-1">
                                 <span class="flex flex-col">
@@ -74,9 +75,9 @@ feedback(feedback_id PK, student_id FK, teacher_id FK, subject_id FK, rating INT
                                     <span class="mt-1 flex items-center text-xs text-gray-500">View feedback</span>
                                 </span>
                             </span>
-                            <span class="pointer-events-none absolute -inset-px rounded-lg border-2" aria-hidden="true"></span>
+                            <span class="border-span pointer-events-none absolute -inset-px rounded-lg border-2" aria-hidden="true"></span>
                         </label>
-                        <label class="relative flex cursor-pointer rounded-lg border border-gray-300 bg-white p-4 shadow-sm focus:outline-none">
+                        <label class="user-type-label relative flex cursor-pointer rounded-lg border border-gray-300 bg-white p-4 shadow-sm focus:outline-none">
                             <input type="radio" name="userType" value="admin" class="sr-only" required>
                             <span class="flex flex-1">
                                 <span class="flex flex-col">
@@ -84,7 +85,7 @@ feedback(feedback_id PK, student_id FK, teacher_id FK, subject_id FK, rating INT
                                     <span class="mt-1 flex items-center text-xs text-gray-500">Manage system</span>
                                 </span>
                             </span>
-                            <span class="pointer-events-none absolute -inset-px rounded-lg border-2" aria-hidden="true"></span>
+                            <span class="border-span pointer-events-none absolute -inset-px rounded-lg border-2" aria-hidden="true"></span>
                         </label>
                     </div>
                 </div>
@@ -132,7 +133,7 @@ feedback(feedback_id PK, student_id FK, teacher_id FK, subject_id FK, rating INT
 
                 <!-- Submit Button -->
                 <div>
-                    <button type="submit" id="loginBtn"
+                    <button name="submit" type="submit" id="loginBtn"
                             class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 btn-hover">
                         <span class="absolute left-0 inset-y-0 flex items-center pl-3">
                             <svg class="h-5 w-5 text-blue-500 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -144,159 +145,126 @@ feedback(feedback_id PK, student_id FK, teacher_id FK, subject_id FK, rating INT
                     </button>
                 </div>
 
-                <!-- Demo Credentials -->
-                <div class="bg-blue-50 border border-blue-200 rounded-md p-4">
-                    <h3 class="text-sm font-medium text-blue-800 mb-2">Demo Credentials:</h3>
-                    <div class="text-xs text-blue-700 space-y-1">
-                        <div><strong>Student:</strong> student@demo.com / password123</div>
-                        <div><strong>Teacher:</strong> teacher@demo.com / password123</div>
-                        <div><strong>Admin:</strong> admin@demo.com / password123</div>
-                    </div>
-                </div>
             </form>
         </div>
     </div>
 
-    <script src="../assets/js/scripts.js"></script>
     <script>
-        // Login page specific functionality
+        // Input verification and animations only
         document.addEventListener('DOMContentLoaded', function() {
-            const loginForm = document.getElementById('loginForm');
             const userTypeInputs = document.querySelectorAll('input[name="userType"]');
-            const loginBtn = document.getElementById('loginBtn');
-            const loginBtnText = document.getElementById('loginBtnText');
-            const loginSpinner = document.getElementById('loginSpinner');
 
-            // Handle user type selection styling
+            // Handle user type selection styling and behavior (animation)
             userTypeInputs.forEach(input => {
+                // Add click event to the label for better UX
+                const label = input.closest('label');
+                if (label) {
+                    label.addEventListener('click', function(e) {
+                        // Prevent default label behavior
+                        e.preventDefault();
+                        
+                        // Uncheck all other inputs
+                        userTypeInputs.forEach(otherInput => {
+                            if (otherInput !== input) {
+                                otherInput.checked = false;
+                                updateRadioButtonStyling(otherInput);
+                            }
+                        });
+                        
+                        // Check this input
+                        input.checked = true;
+                        updateRadioButtonStyling(input);
+                    });
+                }
+                
+                // Add change event for form validation
                 input.addEventListener('change', function() {
-                    // Remove active styling from all labels
-                    document.querySelectorAll('label').forEach(label => {
-                        const borderSpan = label.querySelector('span[aria-hidden="true"]');
-                        if (borderSpan) {
-                            borderSpan.classList.remove('border-blue-500', 'ring-2', 'ring-blue-500');
-                        }
-                        label.classList.remove('ring-2', 'ring-blue-500');
-                    });
-                    
-                    // Add active styling to selected label
-                    if (this.checked) {
-                        const label = this.closest('label');
-                        const borderSpan = label.querySelector('span[aria-hidden="true"]');
-                        if (borderSpan) {
-                            borderSpan.classList.add('border-blue-500', 'ring-2', 'ring-blue-500');
-                        }
-                        label.classList.add('ring-2', 'ring-blue-500');
-                    }
-                });
-                
-            });
-
-            // Ensure only one option can be selected (radio button behavior)
-            userTypeInputs.forEach(input => {
-                input.addEventListener('click', function() {
-                    // Uncheck all other inputs
-                    userTypeInputs.forEach(otherInput => {
-                        if (otherInput !== this) {
-                            otherInput.checked = false;
-                        }
-                    });
+                    updateRadioButtonStyling(this);
                 });
             });
-
-            // Handle form submission
-            loginForm.addEventListener('submit', function(e) {
-                e.preventDefault();
+            
+            // Function to update radio button styling
+            function updateRadioButtonStyling(radioInput) {
+                const label = radioInput.closest('label');
+                const borderSpan = label?.querySelector('.border-span');
                 
-                // Get form data
-                const formData = new FormData(loginForm);
-                const userType = formData.get('userType');
-                const email = formData.get('email');
-                const password = formData.get('password');
-
-                // Validate form
-                if (!userType || !email || !password) {
-                    FeedbackSystem.utils.showAlert('Please fill in all required fields.', 'error');
-                    return;
-                }
-
-                if (!FeedbackSystem.utils.validateEmail(email)) {
-                    FeedbackSystem.utils.showAlert('Please enter a valid email address.', 'error');
-                    return;
-                }
-
-                // Show loading state
-                loginBtn.disabled = true;
-                loginBtnText.textContent = 'Signing in...';
-                loginSpinner.classList.remove('hidden');
-
-                // Simulate login process (replace with actual API call)
-                setTimeout(() => {
-                    // Demo login logic
-                    if (email === 'student@demo.com' && password === 'password123' && userType === 'student') {
-                        handleSuccessfulLogin({ name: 'Demo Student', email: email, type: 'student' });
-                    } else if (email === 'teacher@demo.com' && password === 'password123' && userType === 'teacher') {
-                        handleSuccessfulLogin({ name: 'Demo Teacher', email: email, type: 'teacher' });
-                    } else if (email === 'admin@demo.com' && password === 'password123' && userType === 'admin') {
-                        handleSuccessfulLogin({ name: 'Demo Admin', email: email, type: 'admin' });
-                    } else {
-                        FeedbackSystem.utils.showAlert('Invalid credentials. Please try again.', 'error');
-                        resetLoginButton();
+                if (radioInput.checked) {
+                    // Add active styling
+                    label.classList.add('ring-2');
+                    if (borderSpan) {
+                        borderSpan.classList.add('border-blue-500');
                     }
-                }, 1500);
-            });
-
-            function handleSuccessfulLogin(user) {
-                // Store user data
-                FeedbackSystem.utils.storage.set('user', user);
-                FeedbackSystem.utils.storage.set('userType', user.type);
-                
-                // Show success message
-                FeedbackSystem.utils.showAlert(`Welcome back, ${user.name}!`, 'success');
-                
-                // Redirect based on user type
-                setTimeout(() => {
-                    switch(user.type) {
-                        case 'student':
-                            window.location.href = 'student/dashboard.html';
-                            break;
-                        case 'teacher':
-                            window.location.href = 'teacher/dashboard.html';
-                            break;
-                        case 'admin':
-                            window.location.href = 'admin/dashboard.html';
-                            break;
-                        default:
-                            window.location.href = '../index.html';
+                } else {
+                    // Remove active styling
+                    label.classList.remove('ring-2');
+                    if (borderSpan) {
+                        borderSpan.classList.remove('border-blue-500');
                     }
-                }, 1000);
+                }
             }
 
-            function resetLoginButton() {
-                loginBtn.disabled = false;
-                loginBtnText.textContent = 'Sign in';
-                loginSpinner.classList.add('hidden');
-            }
-
-            // Auto-select user type based on email if it contains keywords
-            document.getElementById('email').addEventListener('input', function() {
-                const email = this.value.toLowerCase();
-                userTypeInputs.forEach(input => {
-                    input.checked = false;
-                });
-                
-                if (email.includes('student')) {
-                    document.querySelector('input[value="student"]').checked = true;
-                    document.querySelector('input[value="student"]').dispatchEvent(new Event('change'));
-                } else if (email.includes('teacher')) {
-                    document.querySelector('input[value="teacher"]').checked = true;
-                    document.querySelector('input[value="teacher"]').dispatchEvent(new Event('change'));
-                } else if (email.includes('admin')) {
-                    document.querySelector('input[value="admin"]').checked = true;
-                    document.querySelector('input[value="admin"]').dispatchEvent(new Event('change'));
-                }
-            });
         });
+
+        // Email validation utility
+        function validateEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
     </script>
+
+    <style>
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn-hover:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Custom radio button styling */
+        .user-type-label {
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+        
+        .user-type-label:hover {
+            border-color: #3b82f6;
+            background-color: #f8fafc;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .user-type-label.ring-2 {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+        
+        .user-type-label .border-span {
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .user-type-label.ring-2 .border-span {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        }
+    </style>
 </body>
 </html>

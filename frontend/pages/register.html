@@ -29,6 +29,7 @@ feedback(feedback_id PK, student_id FK, teacher_id FK, subject_id FK, rating INT
                 </div>
                 <div class="flex items-center space-x-4">
                     <a href="../index.html" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Back to Home</a>
+                    <a href="login.html" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Sign In</a>
                 </div>
             </div>
         </div>
@@ -51,11 +52,11 @@ feedback(feedback_id PK, student_id FK, teacher_id FK, subject_id FK, rating INT
             </div>
 
             <!-- Registration Form -->
-            <form class="mt-8 space-y-6" id="registerForm">
+            <form class="mt-8 space-y-6" id="registerForm" method="post" action="../../backend/register.php">
                 <!-- User Type Selection -->
                 <div class="space-y-4">
                     <label class="block text-sm font-medium text-gray-700">I want to register as a:</label>
-                    <div class="grid grid-cols-3 gap-3">
+                    <div class="grid grid-cols-2 gap-3">
                         <label class="relative flex cursor-pointer rounded-lg border border-gray-300 bg-white p-4 shadow-sm focus:outline-none">
                             <input type="radio" name="userType" value="student" class="sr-only" required>
                             <span class="flex flex-1">
@@ -71,17 +72,7 @@ feedback(feedback_id PK, student_id FK, teacher_id FK, subject_id FK, rating INT
                             <span class="flex flex-1">
                                 <span class="flex flex-col">
                                     <span class="block text-sm font-medium text-gray-900">Teacher</span>
-                                    <span class="mt-1 flex items-center text-xs text-gray-500">View feedback</span>
-                                </span>
-                            </span>
-                            <span class="pointer-events-none absolute -inset-px rounded-lg border-2" aria-hidden="true"></span>
-                        </label>
-                        <label class="relative flex cursor-pointer rounded-lg border border-gray-300 bg-white p-4 shadow-sm focus:outline-none">
-                            <input type="radio" name="userType" value="admin" class="sr-only" required>
-                            <span class="flex flex-1">
-                                <span class="flex flex-col">
-                                    <span class="block text-sm font-medium text-gray-900">Admin</span>
-                                    <span class="mt-1 flex items-center text-xs text-gray-500">Manage system</span>
+                                    <span class="mt-1 flex items-center text-xs text-gray-500">Receive feedback</span>
                                 </span>
                             </span>
                             <span class="pointer-events-none absolute -inset-px rounded-lg border-2" aria-hidden="true"></span>
@@ -89,23 +80,19 @@ feedback(feedback_id PK, student_id FK, teacher_id FK, subject_id FK, rating INT
                     </div>
                 </div>
 
-                <!-- Personal Information -->
-                <div class="space-y-4">
-                    <h3 class="text-lg font-medium text-gray-900">Personal Information</h3>
-                    
-                    <!-- Full Name -->
+                <!-- Name Field -->
                     <div>
-                        <label for="fullName" class="block text-sm font-medium text-gray-700">
+                    <label for="name" class="block text-sm font-medium text-gray-700">
                             Full Name
                         </label>
                         <div class="mt-1">
-                            <input id="fullName" name="fullName" type="text" autocomplete="name" required
+                        <input id="name" name="name" type="text" autocomplete="name" required
                                    class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm form-input"
                                    placeholder="Enter your full name">
                         </div>
                     </div>
 
-                    <!-- Email -->
+                <!-- Email Field -->
                     <div>
                         <label for="email" class="block text-sm font-medium text-gray-700">
                             Email address
@@ -117,44 +104,26 @@ feedback(feedback_id PK, student_id FK, teacher_id FK, subject_id FK, rating INT
                         </div>
                     </div>
 
-                    <!-- Department (for Students and Teachers) -->
-                    <div id="departmentField" class="hidden">
+                <!-- Department Field -->
+                <div>
                         <label for="department" class="block text-sm font-medium text-gray-700">
                             Department
                         </label>
                         <div class="mt-1">
-                            <select id="department" name="department" 
-                                    class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm form-input">
+                            <select id="department" name="department" required
+                                class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm form-select">
                                 <option value="">Select your department</option>
-                                <option value="computer_science">Computer Science</option>
-                                <option value="electrical_engineering">Electrical Engineering</option>
-                                <option value="mechanical_engineering">Mechanical Engineering</option>
-                                <option value="civil_engineering">Civil Engineering</option>
-                                <option value="business">Business Administration</option>
-                                <option value="arts">Arts & Humanities</option>
-                                <option value="science">Natural Sciences</option>
+                                <option value="Computer Science">Computer Science</option>
+                                <option value="Mathematics">Mathematics</option>
+                                <option value="Physics">Physics</option>
+                                <option value="Chemistry">Chemistry</option>
+                                <option value="Biology">Biology</option>
+                                <option value="Engineering">Engineering</option>
                             </select>
                         </div>
                     </div>
 
-                    <!-- Subject (for Teachers) -->
-                    <div id="subjectField" class="hidden">
-                        <label for="subject" class="block text-sm font-medium text-gray-700">
-                            Teaching Subject
-                        </label>
-                        <div class="mt-1">
-                            <input id="subject" name="subject" type="text" 
-                                   class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm form-input"
-                                   placeholder="Enter your teaching subject">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Security Information -->
-                <div class="space-y-4">
-                    <h3 class="text-lg font-medium text-gray-900">Security Information</h3>
-                    
-                    <!-- Password -->
+                <!-- Password Field -->
                     <div>
                         <label for="password" class="block text-sm font-medium text-gray-700">
                             Password
@@ -162,12 +131,12 @@ feedback(feedback_id PK, student_id FK, teacher_id FK, subject_id FK, rating INT
                         <div class="mt-1">
                             <input id="password" name="password" type="password" autocomplete="new-password" required
                                    class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm form-input"
-                                   placeholder="Create a strong password">
-                        </div>
-                        <p class="mt-1 text-xs text-gray-500">Must be at least 8 characters long</p>
+                               placeholder="Create a password (min. 6 characters)">
+                    </div>
+                    <p class="mt-1 text-xs text-gray-500">Password must be at least 6 characters long</p>
                     </div>
 
-                    <!-- Confirm Password -->
+                <!-- Confirm Password Field -->
                     <div>
                         <label for="confirmPassword" class="block text-sm font-medium text-gray-700">
                             Confirm Password
@@ -176,7 +145,6 @@ feedback(feedback_id PK, student_id FK, teacher_id FK, subject_id FK, rating INT
                             <input id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" required
                                    class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm form-input"
                                    placeholder="Confirm your password">
-                        </div>
                     </div>
                 </div>
 
@@ -194,10 +162,10 @@ feedback(feedback_id PK, student_id FK, teacher_id FK, subject_id FK, rating INT
 
                 <!-- Submit Button -->
                 <div>
-                    <button type="submit" id="registerBtn"
-                            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 btn-hover">
+                    <button name="setregister" type="submit" id="registerBtn"
+                            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 btn-hover">
                         <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-                            <svg class="h-5 w-5 text-green-500 group-hover:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="h-5 w-5 text-blue-500 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
                             </svg>
                         </span>
@@ -205,26 +173,19 @@ feedback(feedback_id PK, student_id FK, teacher_id FK, subject_id FK, rating INT
                         <div id="registerSpinner" class="hidden spinner ml-2"></div>
                     </button>
                 </div>
+
             </form>
         </div>
     </div>
 
-    <script src="../assets/js/scripts.js"></script>
-    <script src="../assets/js/api-config.js"></script>
     <script>
-        // Registration page specific functionality
+        // Input verification and animations only
         document.addEventListener('DOMContentLoaded', function() {
-            const registerForm = document.getElementById('registerForm');
             const userTypeInputs = document.querySelectorAll('input[name="userType"]');
-            const departmentField = document.getElementById('departmentField');
-            const subjectField = document.getElementById('subjectField');
-            const registerBtn = document.getElementById('registerBtn');
-            const registerBtnText = document.getElementById('registerBtnText');
-            const registerSpinner = document.getElementById('registerSpinner');
-            const passwordInput = document.getElementById('password');
-            const confirmPasswordInput = document.getElementById('confirmPassword');
+            const passwordField = document.getElementById('password');
+            const confirmPasswordField = document.getElementById('confirmPassword');
 
-            // Handle user type selection styling and field visibility
+            // Handle user type selection styling (animation)
             userTypeInputs.forEach(input => {
                 input.addEventListener('change', function() {
                     // Remove active styling from all labels
@@ -245,20 +206,6 @@ feedback(feedback_id PK, student_id FK, teacher_id FK, subject_id FK, rating INT
                         }
                         label.classList.add('ring-2', 'ring-blue-500');
                     }
-
-                    // Show/hide fields based on user type
-                    const userType = this.value;
-                    if (userType === 'student' || userType === 'teacher') {
-                        departmentField.classList.remove('hidden');
-                        if (userType === 'teacher') {
-                            subjectField.classList.remove('hidden');
-                        } else {
-                            subjectField.classList.add('hidden');
-                        }
-                    } else {
-                        departmentField.classList.add('hidden');
-                        subjectField.classList.add('hidden');
-                    }
                 });
             });
 
@@ -274,160 +221,57 @@ feedback(feedback_id PK, student_id FK, teacher_id FK, subject_id FK, rating INT
                 });
             });
 
-            // Real-time password validation
-            function validatePasswords() {
-                const password = passwordInput.value;
-                const confirmPassword = confirmPasswordInput.value;
+            // Real-time password confirmation validation
+            function validatePasswordMatch() {
+                const password = passwordField.value;
+                const confirmPassword = confirmPasswordField.value;
                 
                 if (confirmPassword && password !== confirmPassword) {
-                    confirmPasswordInput.classList.add('border-red-500');
-                    confirmPasswordInput.classList.remove('border-gray-300');
-                    // Show error message
-                    let errorMsg = document.getElementById('passwordError');
-                    if (!errorMsg) {
-                        errorMsg = document.createElement('p');
-                        errorMsg.id = 'passwordError';
-                        errorMsg.className = 'text-red-500 text-sm mt-1';
-                        confirmPasswordInput.parentNode.appendChild(errorMsg);
-                    }
-                    errorMsg.textContent = 'Passwords do not match';
-                    return false;
+                    confirmPasswordField.classList.add('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+                    confirmPasswordField.classList.remove('border-gray-300', 'focus:ring-blue-500', 'focus:border-blue-500');
                 } else {
-                    confirmPasswordInput.classList.remove('border-red-500');
-                    confirmPasswordInput.classList.add('border-gray-300');
-                    // Remove error message
-                    const errorMsg = document.getElementById('passwordError');
-                    if (errorMsg) {
-                        errorMsg.remove();
-                    }
-                    return true;
+                    confirmPasswordField.classList.remove('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+                    confirmPasswordField.classList.add('border-gray-300', 'focus:ring-blue-500', 'focus:border-blue-500');
                 }
             }
 
-            // Add event listeners for password validation
-            passwordInput.addEventListener('input', validatePasswords);
-            confirmPasswordInput.addEventListener('input', validatePasswords);
-
-            // Handle form submission
-            registerForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                // Get form data
-                const formData = new FormData(registerForm);
-                const userType = formData.get('userType');
-                const fullName = formData.get('fullName');
-                const email = formData.get('email');
-                const department = formData.get('department');
-                const subject = formData.get('subject');
-                const password = formData.get('password');
-                const confirmPassword = formData.get('confirmPassword');
-                const terms = formData.get('terms');
-
-                // Validate form
-                if (!userType || !fullName || !email || !password || !confirmPassword || !terms) {
-                    FeedbackSystem.utils.showAlert('Please fill in all required fields.', 'error');
-                    return;
-                }
-
-                if (!FeedbackSystem.utils.validateEmail(email)) {
-                    FeedbackSystem.utils.showAlert('Please enter a valid email address.', 'error');
-                    return;
-                }
-
-                if (password.length < 6) {
-                    FeedbackSystem.utils.showAlert('Password must be at least 6 characters long.', 'error');
-                    return;
-                }
-
-                if (password !== confirmPassword) {
-                    FeedbackSystem.utils.showAlert('Passwords do not match.', 'error');
-                    return;
-                }
-
-                if ((userType === 'student' || userType === 'teacher') && !department) {
-                    FeedbackSystem.utils.showAlert('Please select your department.', 'error');
-                    return;
-                }
-
-                if (userType === 'teacher' && !subject) {
-                    FeedbackSystem.utils.showAlert('Please enter your teaching subject.', 'error');
-                    return;
-                }
-
-                // Show loading state
-                registerBtn.disabled = true;
-                registerBtnText.textContent = 'Creating Account...';
-                registerSpinner.classList.remove('hidden');
-
-                try {
-                    // Prepare registration data
-                    const registrationData = {
-                        action: 'register',
-                        name: fullName,
-                        email: email,
-                        password: password,
-                        confirmPassword: confirmPassword,
-                        userType: userType,
-                        department: department,
-                        subject: subject
-                    };
-
-                    // Call the registration API
-                    const response = await AuthAPI.register(registrationData);
-                    
-                    if (response.success) {
-                        // Show success message
-                        FeedbackSystem.utils.showAlert(`Account created successfully! Welcome, ${fullName}!`, 'success');
-                        
-                        // Redirect based on user type
-                        setTimeout(() => {
-                            switch(userType) {
-                                case 'student':
-                                    window.location.href = 'student/dashboard.html';
-                                    break;
-                                case 'teacher':
-                                    window.location.href = 'teacher/dashboard.html';
-                                    break;
-                                case 'admin':
-                                    window.location.href = 'admin/dashboard.html';
-                                    break;
-                                default:
-                                    window.location.href = 'login.html';
-                            }
-                        }, 1500);
-                    } else {
-                        FeedbackSystem.utils.showAlert(response.message || 'Registration failed. Please try again.', 'error');
-                    }
-                } catch (error) {
-                    console.error('Registration error:', error);
-                    FeedbackSystem.utils.showAlert('Registration failed. Please check your connection and try again.', 'error');
-                } finally {
-                    // Reset button state
-                    registerBtn.disabled = false;
-                    registerBtnText.textContent = 'Create Account';
-                    registerSpinner.classList.add('hidden');
-                }
-            });
-
-            // Auto-select user type based on email if it contains keywords
-            document.getElementById('email').addEventListener('input', function() {
-                const email = this.value.toLowerCase();
-                userTypeInputs.forEach(input => {
-                    input.checked = false;
-                });
-                
-                if (email.includes('student')) {
-                    document.querySelector('input[value="student"]').checked = true;
-                    document.querySelector('input[value="student"]').dispatchEvent(new Event('change'));
-                } else if (email.includes('teacher')) {
-                    document.querySelector('input[value="teacher"]').checked = true;
-                    document.querySelector('input[value="teacher"]').dispatchEvent(new Event('change'));
-                } else if (email.includes('admin')) {
-                    document.querySelector('input[value="admin"]').checked = true;
-                    document.querySelector('input[value="admin"]').dispatchEvent(new Event('change'));
-                }
-            });
+            passwordField.addEventListener('input', validatePasswordMatch);
+            confirmPasswordField.addEventListener('input', validatePasswordMatch);
         });
+
+        // Email validation utility
+        function validateEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
     </script>
+
+    <style>
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn-hover:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+    </style>
 </body>
 </html>
