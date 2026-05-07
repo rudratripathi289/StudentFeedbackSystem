@@ -1,273 +1,128 @@
-# StudentFeedbackSystem# Student Feedback System - Backend
+# Student Feedback System - Frontend Only
 
-A complete PHP backend for the Student Feedback System with RESTful API endpoints, user authentication, and database management.
+This is a **frontend-only version** of the Student Feedback System that provides a complete user interface without requiring a backend server.
 
 ## 🚀 Features
 
-- **User Authentication**: Login, registration, and session management
-- **Role-Based Access Control**: Student, Teacher, and Admin roles
-- **Feedback Management**: Submit, view, update, and delete feedback
-- **User Management**: CRUD operations for students and teachers
-- **Course Management**: Manage subjects and course assignments
-- **Database Integration**: MySQL database with PDO
-- **Security**: Password hashing, input sanitization, and validation
-- **RESTful API**: Clean and consistent API endpoints
-- **CORS Support**: Cross-origin resource sharing enabled
+- **Complete User Interface**: All pages and functionality are fully functional
+- **Mock Data System**: Simulates backend functionality with local data
+- **No Backend Required**: Works entirely in the browser
+- **Responsive Design**: Modern UI built with Tailwind CSS
+- **Role-Based Access**: Student, Teacher, and Admin interfaces
 
 ## 📁 Project Structure
 
 ```
-backend/
-├── config/
-│   └── database.php          # Database configuration and connection
-├── database/
-│   └── schema.sql            # Database schema and sample data
-├── includes/
-│   └── functions.php         # Utility functions and helpers
-├── api/
-│   ├── auth.php              # Authentication endpoints
-│   ├── feedback.php          # Feedback management endpoints
-│   ├── users.php             # User management endpoints
-│   └── courses.php           # Course management endpoints
-├── index.php                 # Main entry point and routing
-└── README.md                 # This file
+frontend/
+├── assets/
+│   ├── css/
+│   │   └── styles.css          # Custom styles
+│   ├── js/
+│   │   ├── api-config.js       # Mock API system
+│   │   └── scripts.js          # Utility functions
+│   └── img/                    # Images
+├── components/
+│   └── navbar.html             # Navigation component
+├── pages/
+│   ├── admin/                  # Admin interface
+│   ├── student/                # Student interface
+│   ├── teacher/                # Teacher interface
+│   ├── login.html              # Login page
+│   └── register.html           # Registration page
+└── index.html                  # Landing page
 ```
 
 ## 🛠️ Requirements
 
-- **PHP**: 7.4 or higher
-- **MySQL**: 5.7 or higher
-- **Web Server**: Apache/Nginx with mod_rewrite enabled
-- **Extensions**: PDO, PDO_MySQL, JSON
+- **Web Browser**: Modern browser with JavaScript enabled
+- **No Server Required**: Works entirely client-side
+- **No Database**: All data is stored in browser memory
 
-## ⚙️ Installation
+## 🚀 Getting Started
 
-### 1. Clone the Repository
-```bash
-git clone <repository-url>
-cd student-feedback-system/backend
-```
+1. **Clone or Download** the project files
+2. **Open** `frontend/index.html` in your web browser
+3. **Start Using** the system immediately!
 
-### 2. Configure Database
-Edit `config/database.php` with your database credentials:
-```php
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'feedback_system');
-define('DB_USER', 'your_username');
-define('DB_PASS', 'your_password');
-```
+## 🔐 Demo Credentials
 
-### 3. Setup Database
-Visit `/backend/database/setup` in your browser to automatically create the database schema and sample data.
+The system comes with pre-configured demo accounts:
 
-### 4. Configure Web Server
-Ensure your web server is configured to handle the backend routes properly.
+- **Student**: `john.doe@university.edu` / `password123`
+- **Teacher**: `chen.wei@university.edu` / `password123`
+- **Admin**: `admin@university.edu` / `password123`
 
-## 🔌 API Endpoints
+## 💾 Data Persistence
 
-### Authentication
-- `POST /api/auth.php` - Login, Register, Logout
-- `GET /api/auth.php?action=check` - Check authentication status
+- **Session Data**: User login state persists during browser session
+- **Mock Data**: Sample data is loaded when the page loads
+- **Local Storage**: Some user preferences may be saved locally
 
-### Feedback Management
-- `GET /api/feedback.php?action=list` - Get feedback list (admin)
-- `GET /api/feedback.php?action=student` - Get student feedback
-- `GET /api/feedback.php?action=teacher` - Get teacher feedback
-- `POST /api/feedback.php` - Submit feedback
-- `PUT /api/feedback.php` - Update feedback (admin)
-- `DELETE /api/feedback.php?id={id}` - Delete feedback (admin)
+## 🔧 How It Works
 
-### User Management
-- `GET /api/users.php?action=list` - Get user list (admin)
-- `GET /api/users.php?action=departments` - Get departments
-- `GET /api/users.php?action=profile` - Get user profile
-- `POST /api/users.php` - Create user (admin)
-- `PUT /api/users.php` - Update user (admin)
-- `DELETE /api/users.php?id={id}&type={type}` - Delete user (admin)
+### Mock API System
+The `api-config.js` file provides mock implementations of all backend functions:
 
-### Course Management
-- `GET /api/courses.php?action=list` - Get course list (admin)
-- `GET /api/courses.php?action=student` - Get student courses
-- `GET /api/courses.php?action=teacher` - Get teacher courses
-- `GET /api/courses.php?action=departments` - Get departments
-- `GET /api/courses.php?action=teachers` - Get teachers
-- `POST /api/courses.php` - Create course (admin)
-- `PUT /api/courses.php` - Update course (admin)
-- `DELETE /api/courses.php?id={id}` - Delete course (admin)
+- **Authentication**: Login, logout, user verification
+- **Feedback Management**: Submit, view, and manage feedback
+- **User Management**: Create, update, and delete users
+- **Course Management**: Manage courses and subjects
 
-## 🔐 Authentication
+### Data Flow
+1. User interacts with the interface
+2. Mock API functions simulate backend responses
+3. Data is processed and displayed
+4. No actual network requests are made
 
-The system uses session-based authentication with JWT token support.
+## 🎯 Use Cases
 
-### Login Request
-```json
-{
-  "action": "login",
-  "email": "user@example.com",
-  "password": "password123",
-  "userType": "student"
-}
-```
+- **Prototyping**: Test UI/UX before backend development
+- **Demo Purposes**: Show stakeholders the complete system
+- **Learning**: Understand the frontend architecture
+- **Offline Development**: Work without server setup
 
-### Login Response
-```json
-{
-  "success": true,
-  "message": "Login successful",
-  "data": {
-    "user_id": 1,
-    "name": "John Doe",
-    "email": "user@example.com",
-    "user_type": "student",
-    "department": "Computer Science",
-    "token": "jwt_token_here"
-  }
-}
-```
+## 🚀 Adding Backend Later
 
-## 📊 Database Schema
+When you're ready to add a backend:
 
-### Tables
-- **departments**: Department information
-- **students**: Student user accounts
-- **teachers**: Teacher user accounts
-- **subjects**: Course/subject information
-- **feedback**: Student feedback submissions
+1. **Replace** mock API calls with real HTTP requests
+2. **Update** `api-config.js` to point to real endpoints
+3. **Implement** server-side logic and database
+4. **Test** the integration
 
-### Sample Data
-The system comes with pre-loaded sample data:
-- 6 departments (Computer Science, Mathematics, Physics, etc.)
-- 7 teachers (including 1 admin)
-- 6 students
-- 6 subjects
-- 6 sample feedback entries
+## 🔒 Security Note
 
-**Default Password**: `password123` for all sample users
+This is a **demo/prototype system**. In production:
 
-## 🚦 Usage Examples
+- Implement proper authentication
+- Add server-side validation
+- Use secure data storage
+- Enable HTTPS
+- Add rate limiting
 
-### Submit Feedback (Student)
-```javascript
-fetch('/backend/api/feedback.php', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    action: 'submit',
-    teacherId: 1,
-    subjectId: 1,
-    rating: 5,
-    comment: 'Excellent teaching methods!'
-  })
-});
-```
+## 📱 Browser Compatibility
 
-### Get Feedback List (Admin)
-```javascript
-fetch('/backend/api/feedback.php?action=list&page=1&limit=20');
-```
-
-### Create User (Admin)
-```javascript
-fetch('/backend/api/users.php', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    action: 'create',
-    name: 'New Student',
-    email: 'newstudent@example.com',
-    password: 'password123',
-    userType: 'student',
-    department: 'Computer Science'
-  })
-});
-```
-
-## 🔒 Security Features
-
-- **Password Hashing**: Uses PHP's `password_hash()` function
-- **Input Sanitization**: All user inputs are sanitized
-- **SQL Injection Prevention**: Uses prepared statements with PDO
-- **Session Security**: Secure session handling
-- **Role-Based Access**: Different endpoints require different user roles
-
-## 🐛 Error Handling
-
-All API endpoints return consistent error responses:
-
-```json
-{
-  "error": "Error message here"
-}
-```
-
-Common HTTP status codes:
-- `200`: Success
-- `400`: Bad Request
-- `401`: Unauthorized
-- `403`: Forbidden
-- `404`: Not Found
-- `405`: Method Not Allowed
-- `500`: Internal Server Error
-
-## 📝 Logging
-
-The system logs user activities for audit purposes:
-- User login/logout
-- Feedback submissions
-- User creation/deletion
-- Course management operations
-
-## 🔧 Configuration
-
-### Database Configuration
-Edit `config/database.php` to modify:
-- Database connection settings
-- Connection pooling
-- Error handling
-
-### CORS Settings
-Modify CORS headers in `includes/functions.php` if needed.
-
-## 🚀 Deployment
-
-### Production Considerations
-1. Disable error reporting in production
-2. Use HTTPS
-3. Configure proper database credentials
-4. Set up proper file permissions
-5. Enable error logging instead of display
-
-### Environment Variables
-Consider using environment variables for sensitive configuration:
-```php
-define('DB_HOST', $_ENV['DB_HOST'] ?? 'localhost');
-define('DB_USER', $_ENV['DB_USER'] ?? 'root');
-define('DB_PASS', $_ENV['DB_PASS'] ?? '');
-```
+- Chrome 80+
+- Firefox 75+
+- Safari 13+
+- Edge 80+
 
 ## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Add tests if applicable
+4. Test in multiple browsers
 5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License.
 
 ## 🆘 Support
 
-For support and questions:
-- Create an issue in the repository
-- Check the API documentation
-- Review the error logs
+For questions or issues:
+- Check the browser console for errors
+- Verify JavaScript is enabled
+- Ensure all files are properly loaded
+- Test in a different browser
 
-## 🔄 Updates
+---
 
-Check for updates regularly and ensure compatibility with your PHP version and database system.
+
